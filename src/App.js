@@ -1,26 +1,226 @@
 import React from 'react';
-import logo from './logo.svg';
+import ReactDOM from 'react-dom';
 import './App.css';
+import { SketchPicker } from 'react-color';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.wallRef = React.createRef();
+    this.state = {
+      shapeColor: 'white',
+      backgroundColor: 'black'
+    }
+  }
+
+  
+
+  changeColorShape = (color) => {console.log('ZMIENIA');
+    this.setState({shapeColor: color.hex})};
+  changeColorback = (color) => {this.setState({backgroundColor: color.hex})};
+
+  numbers = () => Array.from(
+    Array(Math.round((window.innerHeight*window.innerWidth)/(14*14))).keys());
+
+  render() {
+    return (
+      <div 
+      className="App" 
+      style={{backgroundColor: this.state.backgroundColor,
+      lineHeight:'0',
+      }}
+      onMouseUp={(e) => this.wallRef.current.mouseUp(e)}>
+
+       {this.numbers().map((key) =>
+         <Point 
+         key={key}  
+         shapeColor={this.state.shapeColor} 
+         backgroundColor={this.state.backgroundColor}/>)}
+         <Wall ref={this.wallRef}/>
+         <Colors
+          shapeColor={this.state.shapeColor} 
+          backgroundColor={this.state.backgroundColor}
+          backchange={this.changeColorback}
+          shapechange={this.changeColorShape}
+          />
+      </div>
+    );
+  }
+}
+
+
+class Point extends React.Component {
+  
+  render() {
+      this.onmouseover = (e) => (ReactDOM.render(
+        <Shape 
+        shapeColor={this.props.shapeColor} 
+        backgroundColor={this.props.backgroundColor}/>,
+        e.target
+      ))  
+    return (
+      <div 
+      className="point"
+      style={{borderStyle: 'solid',
+        borderColor: this.props.backgroundColor,
+        height: '8px', width: '8px',
+        
+        display: 'inline-block', 
+        backgroundColor: this.props.backgroundColor}}
+        onMouseOver={this.onmouseover}>
+      
+      </div>
+    );
+  }
+}
+
+class Wall extends React.Component{
+  state = {onfront: '1'}
+
+
+  mouseDown = (e) => {
+    e.preventDefault();
+    console.log('DOWNDOWNDOWN');
+    this.setState({onfront: '-1'});
+  };
+  mouseUp = (e) => {
+    e.preventDefault();
+    console.log('UPUPUPUP');
+    this.setState({onfront: '0'});  
+  };
+
+  render(){
+    const index = this.state.onfront;
+    console.log('zmieniam na '+ index);
+    const styleObj = {
+      height:'100%',
+      width: '100%',
+      position: 'absolute', top: '0px',
+      backgroundColor: 'transparent',
+      zIndex: index,
+    };
+
+    return (
+      <div style={styleObj}
+       onMouseDown={(e) => this.mouseDown(e)}
+       onMouseUp={(e) => this.mouseUp(e)}>
+      </div>
+    );
+  }
+}
+
+class Shape extends React.Component{
+
+  randInRange = (min,max) => Math.floor(Math.random() * (max - min)) + min;
+
+  randomizer = () => {
+    const shapes = [
+          <circle 
+          r={this.randInRange(4,40)}
+          stroke={this.props.shapeColor}
+          strokeWidth="1"
+          fill="transparent" />,
+          <rect
+          width={this.randInRange(4,50)} 
+          height={this.randInRange(4,50)} 
+          style={{fill:'transparent', 
+          strokeWidth:1, 
+          stroke:this.props.shapeColor,
+          transform: `rotate(${this.randInRange(0,180)}deg)`}}/>,
+          <polyline 
+          points="0,20 20,20 20,40" 
+          style={{fill:'transparent',
+          stroke:this.props.shapeColor,
+          strokeWidth:'2',
+          transform: `rotate(${this.randInRange(0,180)}deg)`}} />,
+          <path 
+          d="M0 -10 L0 10 M-10 0 L10 0" 
+          stroke={this.props.shapeColor}
+          strokeWidth='2' 
+          style={{fill:'transparent',
+          transform: `rotate(${this.randInRange(0,180)}deg)`}}/>,
+          <polygon 
+          points="-1,1 30,20 16,-21" 
+          style={{fill:'transparent',
+          stroke:this.props.shapeColor,
+          strokeWidth:1,
+          transform: `rotate(${this.randInRange(0,180)}deg)`}} />
+        ]    
+    return shapes[this.randInRange(0,5)];
+     
+  };
+
+  render(){
+    console.log('drawing');
+    return (
+      <svg height='1' width='1'
+        style={{position: 'absolute', height: '0 px', width: '0 px',
+          overflow: 'visible'}}>
+        {this.randomizer()}
+      </svg>
+    )  
+  }
+}
+
+class Colors extends React.Component{
+  state = {
+    hidden: true
+  }
+
+  toogle = () => {this.setState({hidden:!this.state.hidden})}
+
+  render(){
+    if(this.state.hidden){
+      return (
+        <div style={{backgroundColor: '#ff6600', textAlign:'center',
+        position:'absolute',height:'25px',bottom:'-22px',width:'100%'}}
+        onClick={this.toogle}> 
+        </div>
+      )
+    }
+    else {
+      return (
+        <div style={{backgroundColor: '#ff6600', textAlign:'center',
+        position:'absolute',height:'300px',bottom:'-22px',width:'100%'}}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+          <button style={{display:'inline-block'}} onClick={this.toogle}>
+          HIDE
+          </button>
+          <div style={{display:'inline-block'}}>
+          <Picker
+           color={this.props.shapeColor} 
+           onChange={this.props.shapechange}/>
+          </div>
+          <div style={{display:'inline-block'}}>
+          <Picker 
+          color={this.props.backgroundColor} 
+          onChange={this.props.backchange}/>
+          </div>
+          
+        </div>
+      )
+    }
+  }
+}
+
+class Picker extends React.Component{
+  state = {
+    color: this.props.color
+  }
+
+  change = (c) => {this.setState({color:c})};
+
+  render() {
+    return (
+      <SketchPicker
+        color={ this.state.color }
+        onChange={this.change}
+        onChangeComplete={this.props.onChange}
+      />
+    );
+  }
+
 }
 
 export default App;
