@@ -25,10 +25,11 @@ class App extends React.Component {
 
   render() {
     return (
+      <div>
       <div 
-      className="App" 
+      className="App w3-container" 
       style={{backgroundColor: this.state.backgroundColor,
-      lineHeight:'0',
+      lineHeight:'0', height:"95vh", overflow:"hidden"
       }}
       onMouseUp={(e) => this.wallRef.current.mouseUp(e)}>
 
@@ -39,11 +40,18 @@ class App extends React.Component {
          backgroundColor={this.state.backgroundColor}/>)}
          <Wall ref={this.wallRef}/>
          <Colors
-          shapeColor={this.state.shapeColor} 
-          backgroundColor={this.state.backgroundColor}
-          backchange={this.changeColorback}
-          shapechange={this.changeColorShape}
-          />
+      shapeColor={this.state.shapeColor} 
+      backgroundColor={this.state.backgroundColor}
+      backchange={this.changeColorback}
+      shapechange={this.changeColorShape}
+      />
+      </div>
+      <Colors
+      shapeColor={this.state.shapeColor} 
+      backgroundColor={this.state.backgroundColor}
+      backchange={this.changeColorback}
+      shapechange={this.changeColorShape}
+      />
       </div>
     );
   }
@@ -64,7 +72,7 @@ class Point extends React.Component {
       className="point"
       style={{borderStyle: 'solid',
         borderColor: this.props.backgroundColor,
-        height: '8px', width: '8px',
+        height: '20px', width: '20px',
         
         display: 'inline-block', 
         backgroundColor: this.props.backgroundColor}}
@@ -94,7 +102,7 @@ class Wall extends React.Component{
     const index = this.state.onfront;
     console.log('zmieniam na '+ index);
     const styleObj = {
-      height:'100%',
+      height:'95vh',
       width: '100%',
       position: 'absolute', top: '0px',
       backgroundColor: 'transparent',
@@ -168,36 +176,49 @@ class Colors extends React.Component{
     hidden: true
   }
 
-  toogle = () => {this.setState({hidden:!this.state.hidden})}
+  toogle = () => {
+    this.setState({hidden:!this.state.hidden});
+    
+  }
+  
+  componentDidUpdate() {
+    window.scrollBy(0,500);
+    console.log("YEEEE HAAAAW")
+  }
 
   render(){
     if(this.state.hidden){
       return (
-        <div style={{backgroundColor: '#ff6600', textAlign:'center',
-        position:'absolute',height:'25px',bottom:'-22px',width:'100%'}}
-        onClick={this.toogle}> 
+        <div className={"w3-button w3-block w3-blue-grey w3-xlarge"} 
+        onClick={this.toogle}> Click
         </div>
       )
     }
-    else {
+    else { 
       return (
-        <div style={{backgroundColor: '#ff6600', textAlign:'center',
-        position:'absolute',height:'300px',bottom:'-22px',width:'100%'}}
-        >
-          <button style={{display:'inline-block'}} onClick={this.toogle}>
-          HIDE
-          </button>
-          <div style={{display:'inline-block'}}>
-          <Picker
-           color={this.props.shapeColor} 
-           onChange={this.props.shapechange}/>
-          </div>
-          <div style={{display:'inline-block'}}>
-          <Picker 
-          color={this.props.backgroundColor} 
-          onChange={this.props.backchange}/>
-          </div>
-          
+        <div className={"w3-black w3-xlarge w3-container"}>
+
+            <div className={"w3-row-padding w3-black"}>
+              <div className={"w3-col m4 w3-black w3-hover-grey w3-center w3-xxlarge"}  onClick={this.toogle}>
+                Hide
+              </div>
+              <div className={"w3-col m4"}>
+                <div >
+                <Picker
+                color={this.props.shapeColor} 
+                onChange={this.props.shapechange}/>
+                </div>
+              </div>  
+              <div className={"w3-col m4"}>
+                <div>
+                <Picker 
+                color={this.props.backgroundColor} 
+                onChange={this.props.backchange}/>
+                </div>
+              </div>
+
+            </div>
+            
         </div>
       )
     }
@@ -213,7 +234,7 @@ class Picker extends React.Component{
 
   render() {
     return (
-      <SketchPicker
+      <SketchPicker style={{backgroundColor:"black"}}
         color={ this.state.color }
         onChange={this.change}
         onChangeComplete={this.props.onChange}
