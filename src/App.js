@@ -216,7 +216,7 @@ class Wall extends React.Component{
     e.preventDefault();
     console.log('UPUPUPUP');
     this.setState({onfront: '3'});
-    window.open(document.getElementById("canvas").toDataURL('image/png', 1.0));
+    
 
   };
 
@@ -324,8 +324,14 @@ class Colors extends React.Component{
         <div className={"w3-black w3-xlarge w3-container"}>
 
             <div className={"w3-row-padding w3-black"}>
-              <div className={"w3-col m4 w3-black w3-hover-grey w3-center w3-xxlarge"}  onClick={this.toogle}>
-                Hide
+              <div className={"w3-col m4 w3-black  w3-xxlarge"} >
+                <div className={"w3-container w3-hover-grey w3-center"} 
+                onClick={this.toogle}>Hide
+                </div>
+                <div className={"w3-container w3-hover-grey w3-center"} 
+                onClick={()=>window.open(document.getElementById("canvas").toDataURL('image/png', 1.0))}>
+                  Get Image
+                </div>
               </div>
               <div className={"w3-col m4"}>
                 <div >
